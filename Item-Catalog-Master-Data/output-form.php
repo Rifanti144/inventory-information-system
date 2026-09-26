@@ -1,16 +1,19 @@
 <?php
-// Ambil data lama + tambah item baru
-$items = json_decode($_POST["stored_data"] ?? "[]", true) ?? [];
+// Simple session-based storage instead of passing stored_data via hidden field
+session_start();
 
-$items[] = [
+if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
+    $_SESSION['items'] = [];
+}
+
+$_SESSION['items'][] = [
     "item_name" => $_POST["item_name"] ?? "",
     "tech_spec" => $_POST["tech_spec"] ?? "",
     "unit_size" => $_POST["unit_size"] ?? "",
     "category"  => $_POST["category"] ?? ""
 ];
 
-// Encode ulang untuk dikirim balik ke input-form.php
-$stored_json = json_encode($items);
+$items = $_SESSION['items'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -206,9 +209,7 @@ $stored_json = json_encode($items);
       </div>
     </div>
 
-    <!-- Kirim stored_data balik ke input-form.php -->
     <form method="POST" action="input-form.php" style="display:inline-block; margin-top:32px;">
-      <input type="hidden" name="stored_data" value="<?= htmlspecialchars($stored_json) ?>">
       <button type="submit" class="btn-add">Add Another Item</button>
     </form>
 

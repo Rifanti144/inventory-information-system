@@ -1,6 +1,20 @@
 <?php
-// Terima stored_data dari output-form.php (kalau balik ke sini)
-$stored_json = $_POST["stored_data"] ?? "[]";
+// --- Simple session-based storage ---------------------------------
+// Instead of shuttling the accumulated data back and forth between
+// pages via a hidden "stored_data" field (which is easy to tamper
+// with client-side and gets clunky once there's more than one page),
+// we keep it server-side in $_SESSION and just read/write it there.
+session_start();
+
+// Initialize the item list once per session.
+if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
+    $_SESSION['items'] = [];
+}
+
+// Optional: allow clearing the session data (?reset=1) for testing.
+if (isset($_GET['reset'])) {
+    $_SESSION['items'] = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,9 +216,6 @@ $stored_json = $_POST["stored_data"] ?? "[]";
   <div class="form-card">
     <form method="POST" action="output-form.php">
 
-      <!-- Bawa data lama ke output-form.php -->
-      <input type="hidden" name="stored_data" value="<?= htmlspecialchars($stored_json) ?>">
-
       <div class="field">
         <label for="item_name">Item Name</label>
         <input type="text" id="item_name" name="item_name" required>
@@ -242,4 +253,4 @@ $stored_json = $_POST["stored_data"] ?? "[]";
 </main>
 
 </body>
-</html>
+</html>z
