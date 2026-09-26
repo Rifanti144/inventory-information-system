@@ -1,19 +1,25 @@
 <?php
 // Simple session-based storage instead of passing stored_data via hidden field
-session_start();
+    session_start();
 
-if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
-    $_SESSION['items'] = [];
-}
+    if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
+        $_SESSION['items'] = [];
+    }
 
-$_SESSION['items'][] = [
-    "item_name" => $_POST["item_name"] ?? "",
-    "tech_spec" => $_POST["tech_spec"] ?? "",
-    "unit_size" => $_POST["unit_size"] ?? "",
-    "category"  => $_POST["category"] ?? ""
-];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-$items = $_SESSION['items'];
+        $_SESSION['items'][] = [
+            "item_name" => $_POST["item_name"] ?? "",
+            "tech_spec" => $_POST["tech_spec"] ?? "",
+            "unit_size" => $_POST["unit_size"] ?? "",
+            "category"  => $_POST["category"] ?? ""
+        ];
+
+        header("Location: output-form.php");
+        exit;
+    }
+
+    $items = $_SESSION['items'];  
 ?>
 <!DOCTYPE html>
 <html lang="en">
