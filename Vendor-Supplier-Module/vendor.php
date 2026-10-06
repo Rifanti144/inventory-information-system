@@ -181,7 +181,7 @@
   </div>
 
   <div class="form-card">
-    <form action="data-vendor.php" method="POST">
+    <form action="add-vendor.php" method="POST">
 
       <div class="field">
         <label for="vendor_name">Vendor Name</label>
