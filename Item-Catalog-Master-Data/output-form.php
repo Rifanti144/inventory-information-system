@@ -1,25 +1,37 @@
 <?php
-// Simple session-based storage instead of passing stored_data via hidden field
-    session_start();
+require "connection.php";
 
-    if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
-        $_SESSION['items'] = [];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if (isset($_POST['delete_id'])) {
+        // DELETE
+        $stmt = $conn->prepare("DELETE FROM items WHERE id = ?");
+        $stmt->bind_param("i", $_POST['delete_id']);
+        $stmt->execute();
+
+    } else {
+        $name = $_POST["item_name"] ?? "";
+        $spec = $_POST["tech_spec"] ?? "";
+        $size = $_POST["unit_size"] ?? "";
+        $cat  = $_POST["category"]  ?? "";
+
+        if (!empty($_POST['id'])) {
+            
+            $stmt = $conn->prepare("UPDATE items SET item_name=?, tech_spec=?, unit_size=?, category=? WHERE id=?");
+            $stmt->bind_param("ssssi", $name, $spec, $size, $cat, $_POST['id']);
+        } else {
+            
+            $stmt = $conn->prepare("INSERT INTO items (item_name, tech_spec, unit_size, category) VALUES (?,?,?,?)");
+            $stmt->bind_param("ssss", $name, $spec, $size, $cat);
+        }
+        $stmt->execute();
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    header("Location: output-form.php");
+    exit;
+}
 
-        $_SESSION['items'][] = [
-            "item_name" => $_POST["item_name"] ?? "",
-            "tech_spec" => $_POST["tech_spec"] ?? "",
-            "unit_size" => $_POST["unit_size"] ?? "",
-            "category"  => $_POST["category"] ?? ""
-        ];
-
-        header("Location: output-form.php");
-        exit;
-    }
-
-    $items = $_SESSION['items'];  
+$items = $conn->query("SELECT * FROM items ORDER BY id")->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,6 +54,8 @@
     --white: #FFFFFF;
     --grey-dark: #383838;
     --grey-line: #D9D9D9;
+    --red: #FF4D4D;
+    --red-hover: #E63E3E;
   }
 
   * { box-sizing: border-box; }
@@ -108,7 +122,7 @@
     font-weight: 400;
     font-size: 16px;
     color: var(--grey-dark);
-    text-align: left;
+    text-align: center;
     padding: 20px 24px;
     border-bottom: 2px solid var(--grey-dark);
     border-right: 2px solid var(--grey-dark);
@@ -152,10 +166,51 @@
     box-shadow: 6px 8px 0 var(--navy-accent);
     cursor: pointer;
     transition: transform 0.15s ease;
-  }
+  } 
 
   .btn-add:hover { transform: translate(-2px, -2px); }
   .btn-add:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    display: inline-block;
+    font-family: 'Bakbak One', sans-serif;
+    font-size: 15px;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-edit {
+    color: var(--navy-bg);
+    background: var(--lime);
+    box-shadow: 3px 4px 0 var(--navy-accent);
+  }
+
+  .btn-edit:hover {
+    transform: translate(-1px, -1px);
+  }
+
+  .btn-delete {
+    color: var(--white);
+    background: var(--red);
+    box-shadow: 3px 4px 0 var(--navy-accent);
+  }
+
+  .btn-delete:hover {
+    background: var(--red-hover);
+    transform: translate(-1px, -1px);
+  }
 
   @media (max-width: 720px) {
     .topbar { padding: 14px 24px; }
@@ -192,12 +247,13 @@
               <th>Technical Specifications</th>
               <th>Unit Size</th>
               <th>Category</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             <?php if (empty($items)): ?>
               <tr class="empty-row">
-                <td colspan="5">No items added yet.</td>
+                <td colspan="6">No items added yet.</td>
               </tr>
             <?php else: ?>
               <?php foreach ($items as $no => $item): ?>
@@ -207,6 +263,15 @@
                   <td><?= htmlspecialchars($item["tech_spec"]) ?></td>
                   <td><?= htmlspecialchars($item["unit_size"]) ?></td>
                   <td><?= htmlspecialchars($item["category"]) ?></td>
+                  <td>
+                    <div class="action-buttons">
+                      <a href="edit-form.php?id=<?= $item['id'] ?>" class="btn-edit">Edit</a>
+                      <form method="POST" action="delete-form.php" style="display:contents" onsubmit="return confirm('Delete this item?');">
+                        <input type="hidden" name="delete_id" value="<?= $item['id'] ?>">
+                        <button type="submit" class="btn-delete">Delete</button>
+                      </form>
+                    </div>
+                  </td>
                 </tr>
               <?php endforeach; ?>
             <?php endif; ?>

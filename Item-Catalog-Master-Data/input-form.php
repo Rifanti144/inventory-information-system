@@ -1,21 +1,3 @@
-<?php
-// --- Simple session-based storage ---------------------------------
-// Instead of shuttling the accumulated data back and forth between
-// pages via a hidden "stored_data" field (which is easy to tamper
-// with client-side and gets clunky once there's more than one page),
-// we keep it server-side in $_SESSION and just read/write it there.
-session_start();
-
-// Initialize the item list once per session.
-if (!isset($_SESSION['items']) || !is_array($_SESSION['items'])) {
-    $_SESSION['items'] = [];
-}
-
-// Optional: allow clearing the session data (?reset=1) for testing.
-if (isset($_GET['reset'])) {
-    $_SESSION['items'] = [];
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,34 +196,36 @@ if (isset($_GET['reset'])) {
   </div>
 
   <div class="form-card">
-    <form method="POST" action="output-form.php">
+    <form method="POST" action="add-form.php">
 
-      <div class="field">
-        <label for="item_name">Item Name</label>
-        <input type="text" id="item_name" name="item_name" required>
-      </div>
+      <input type="hidden" name="id" value="<?= $edit['id'] ?? '' ?>">
 
-      <div class="field">
-        <label for="tech_spec">Technical Specifications</label>
-        <textarea id="tech_spec" name="tech_spec" rows="3"></textarea>
-      </div>
+        <div class="field">
+          <label for="item_name">Item Name</label>
+          <input type="text" id="item_name" name="item_name" required>
+        </div>
 
-      <div class="field">
-        <label for="unit_size">Unit Size</label>
-        <input type="text" id="unit_size" name="unit_size" placeholder="e.g. 10cm x 20cm">
-      </div>
+        <div class="field">
+          <label for="tech_spec">Technical Specifications</label>
+          <textarea id="tech_spec" name="tech_spec" rows="3"></textarea>
+        </div>
 
-      <div class="field">
-        <label for="category">Category</label>
-        <select id="category" name="category" required>
-          <option value="" disabled selected>Select Category</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Mechanical Parts">Mechanical Parts</option>
-          <option value="Raw Materials">Raw Materials</option>
-          <option value="Consumables">Consumables</option>
-          <option value="Packaging">Packaging</option>
-        </select>
-      </div>
+        <div class="field">
+          <label for="unit_size">Unit Size</label>
+          <input type="text" id="unit_size" name="unit_size" placeholder="e.g. 10cm x 20cm">
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected>Select Category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Mechanical Parts">Mechanical Parts</option>
+            <option value="Raw Materials">Raw Materials</option>
+            <option value="Consumables">Consumables</option>
+            <option value="Packaging">Packaging</option>
+          </select>
+        </div>
 
       <div class="actions">
         <button type="submit" class="btn-save">SAVE</button>
@@ -253,4 +237,4 @@ if (isset($_GET['reset'])) {
 </main>
 
 </body>
-</html>z
+</html>
