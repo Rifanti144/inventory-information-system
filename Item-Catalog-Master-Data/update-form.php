@@ -1,17 +1,34 @@
 <?php
-require "connection.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['id'])) {
-    $id   = (int)$_POST['id'];
-    $name = $_POST['item_name'] ?? "";
-    $spec = $_POST['tech_spec'] ?? "";
-    $size = $_POST['unit_size'] ?? "";
-    $cat  = $_POST['category']  ?? "";
+require 'connection.php';
 
-    $stmt = $conn->prepare("UPDATE items SET item_name=?, tech_spec=?, unit_size=?, category=? WHERE id=?");
-    $stmt->bind_param("ssssi", $name, $spec, $size, $cat, $id);
-    $stmt->execute();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $id        = $_POST['id'];
+    $item_name = $_POST['item_name'];
+    $tech_spec = $_POST['tech_spec'];
+    $unit_size = $_POST['unit_size'];
+    $category  = $_POST['category'];
+
+    $sql = "UPDATE items
+            SET item_name = ?,
+                tech_spec = ?,
+                unit_size = ?,
+                category = ?
+            WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    $stmt->execute([
+        $item_name,
+        $tech_spec,
+        $unit_size,
+        $category,
+        $id
+    ]);
+
+    header("Location: output-form.php");
+    exit;
 }
 
-header("Location: output-form.php");
-exit;   
+?>

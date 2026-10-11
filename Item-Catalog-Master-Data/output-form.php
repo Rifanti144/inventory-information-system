@@ -1,37 +1,11 @@
 <?php
-require "connection.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+require 'connection.php';
 
-    if (isset($_POST['delete_id'])) {
-        // DELETE
-        $stmt = $conn->prepare("DELETE FROM items WHERE id = ?");
-        $stmt->bind_param("i", $_POST['delete_id']);
-        $stmt->execute();
+$sql = "SELECT * FROM items ORDER BY id";
+$stmt = $conn->query($sql);
+$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    } else {
-        $name = $_POST["item_name"] ?? "";
-        $spec = $_POST["tech_spec"] ?? "";
-        $size = $_POST["unit_size"] ?? "";
-        $cat  = $_POST["category"]  ?? "";
-
-        if (!empty($_POST['id'])) {
-            
-            $stmt = $conn->prepare("UPDATE items SET item_name=?, tech_spec=?, unit_size=?, category=? WHERE id=?");
-            $stmt->bind_param("ssssi", $name, $spec, $size, $cat, $_POST['id']);
-        } else {
-            
-            $stmt = $conn->prepare("INSERT INTO items (item_name, tech_spec, unit_size, category) VALUES (?,?,?,?)");
-            $stmt->bind_param("ssss", $name, $spec, $size, $cat);
-        }
-        $stmt->execute();
-    }
-
-    header("Location: output-form.php");
-    exit;
-}
-
-$items = $conn->query("SELECT * FROM items ORDER BY id")->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -265,11 +239,14 @@ $items = $conn->query("SELECT * FROM items ORDER BY id")->fetch_all(MYSQLI_ASSOC
                   <td><?= htmlspecialchars($item["category"]) ?></td>
                   <td>
                     <div class="action-buttons">
-                      <a href="edit-form.php?id=<?= $item['id'] ?>" class="btn-edit">Edit</a>
-                      <form method="POST" action="delete-form.php" style="display:contents" onsubmit="return confirm('Delete this item?');">
-                        <input type="hidden" name="delete_id" value="<?= $item['id'] ?>">
-                        <button type="submit" class="btn-delete">Delete</button>
-                      </form>
+                      <a href="edit-form.php?id=<?php echo $item['id']; ?>" class="btn-edit">Edit</a>
+                      <a
+                        href="delete-form.php?id=<?php echo $item['id']; ?>"
+                        class="btn-delete"
+                        onclick="return confirm('Are you sure you want to delete this item?');"
+                      >
+                        Delete
+                      </a>
                     </div>
                   </td>
                 </tr>
@@ -280,9 +257,9 @@ $items = $conn->query("SELECT * FROM items ORDER BY id")->fetch_all(MYSQLI_ASSOC
       </div>
     </div>
 
-    <form method="POST" action="input-form.php" style="display:inline-block; margin-top:32px;">
-      <button type="submit" class="btn-add">Add Another Item</button>
-    </form>
+    <a href="input-form.php" class="btn-add">
+      Add Another Item
+    </a>
 
   </div>
 

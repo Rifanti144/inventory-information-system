@@ -198,8 +198,6 @@
   <div class="form-card">
     <form method="POST" action="add-form.php">
 
-      <input type="hidden" name="id" value="<?= $edit['id'] ?? '' ?>">
-
         <div class="field">
           <label for="item_name">Item Name</label>
           <input type="text" id="item_name" name="item_name" required>

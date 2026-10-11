@@ -1,18 +1,24 @@
 <?php
-    require "connection.php";
 
-    $id = (int)($_GET['id'] ?? 0);
+require 'connection.php';
 
-    $stmt = $conn->prepare("SELECT * FROM items WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $edit = $stmt->get_result()->fetch_assoc();
+$id = $_GET['id'] ?? null;
 
-    // No such row → back to the list
-    if (!$edit) {
-        header("Location: output-form.php");
-        exit;
-    }
+if (!$id) {
+    die("Item ID is missing.");
+}
+
+$sql = "SELECT * FROM items WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$id]);
+
+$edit = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$edit) {
+    header("Location: output-form.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>

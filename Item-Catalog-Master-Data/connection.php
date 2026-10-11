@@ -1,6 +1,22 @@
 <?php
-$conn = new mysqli("127.0.0.1", "root", "", "item_catalog_master_data", 3306);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+
+$host = "localhost";
+$port = "3306";
+$dbname = "item_catalog_master_data";
+$username = "root";
+$password = "";
+
+try {
+    $conn = new PDO(
+        "mysql:host=$host;port=$port;dbname=$dbname",
+        $username,
+        $password
+    );
+
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
-$conn->set_charset("utf8mb4");
+?>

@@ -1,13 +1,19 @@
 <?php
-require "connection.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['delete_id'])) {
-    $id = (int)$_POST['delete_id'];
+require 'connection.php';
 
-    $stmt = $conn->prepare("DELETE FROM items WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+$id = $_GET['id'] ?? null;
+
+if (!$id) {
+    die("Item ID is missing.");
 }
+
+$sql = "DELETE FROM items WHERE id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->execute([$id]);
 
 header("Location: output-form.php");
 exit;
+
+?>
