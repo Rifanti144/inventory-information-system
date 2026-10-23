@@ -181,7 +181,7 @@
   </div>
 
   <div class="form-card">
-    <form action="data-warehouse.php" method="POST">
+    <form action="add-warehouse.php" method="POST">
 
       <div class="field">
         <label for="warehouse_name">Warehouse Name</label>
