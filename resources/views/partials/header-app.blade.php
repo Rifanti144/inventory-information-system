@@ -15,7 +15,11 @@
     </button>
 
     <div class="user-dropdown" id="user-dropdown" hidden>
+      <span style="display:block; padding:8px 16px; font-size:.8rem; opacity:.7;">Role: {{ ucfirst(auth()->user()->role) }}</span>
       <a href="{{ route('profile.show') }}">Profile</a>
+      @if (auth()->user()->isAdmin())
+        <a href="{{ route('admin.users.index') }}">Manage Users</a>
+      @endif
       <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit">Logout</button>

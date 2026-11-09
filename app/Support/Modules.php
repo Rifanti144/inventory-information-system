@@ -2,14 +2,21 @@
 
 namespace App\Support;
 
+use App\Models\User;
+
 /**
  * Single source of truth for the 4 modules.
  * Used by the sidebar and the dashboard cards, so they never get out of sync.
+ *
+ * A link with a 'roles' key is only shown to those roles (the server still
+ * enforces access through route middleware / policies).
  */
 class Modules
 {
     public static function all(): array
     {
+        $write = ['admin', 'staff'];
+
         return [
             [
                 'key' => 'items',
@@ -17,8 +24,8 @@ class Modules
                 'pattern' => 'items.*',
                 'icon' => 'box.png', 'icon_width' => 69,
                 'links' => [
-                    ['label' => 'Add Items', 'route' => 'items.create'],
-                    ['label' => 'View Items', 'route' => 'items.index'],
+                    ['type' => 'add', 'label' => 'Add Items', 'route' => 'items.create', 'roles' => $write],
+                    ['type' => 'view', 'label' => 'View Items', 'route' => 'items.index'],
                 ],
             ],
             [
@@ -27,8 +34,8 @@ class Modules
                 'pattern' => 'vendors.*',
                 'icon' => 'truck.png', 'icon_width' => 80,
                 'links' => [
-                    ['label' => 'Add Vendor', 'route' => 'vendors.create'],
-                    ['label' => 'View Vendor', 'route' => 'vendors.index'],
+                    ['type' => 'add', 'label' => 'Add Vendor', 'route' => 'vendors.create', 'roles' => $write],
+                    ['type' => 'view', 'label' => 'View Vendor', 'route' => 'vendors.index'],
                 ],
             ],
             [
@@ -37,8 +44,8 @@ class Modules
                 'pattern' => 'warehouses.*',
                 'icon' => 'warehouse.png', 'icon_width' => 73,
                 'links' => [
-                    ['label' => 'Add Warehouse', 'route' => 'warehouses.create'],
-                    ['label' => 'View Warehouse', 'route' => 'warehouses.index'],
+                    ['type' => 'add', 'label' => 'Add Warehouse', 'route' => 'warehouses.create', 'roles' => $write],
+                    ['type' => 'view', 'label' => 'View Warehouse', 'route' => 'warehouses.index'],
                 ],
             ],
             [
@@ -47,10 +54,22 @@ class Modules
                 'pattern' => 'fleet.*',
                 'icon' => 'gear.png', 'icon_width' => 64,
                 'links' => [
-                    ['label' => 'Add Operational', 'route' => 'fleet.create'],
-                    ['label' => 'View Operational', 'route' => 'fleet.index'],
+                    ['type' => 'add', 'label' => 'Add Operational', 'route' => 'fleet.create', 'roles' => $write],
+                    ['type' => 'view', 'label' => 'View Operational', 'route' => 'fleet.index'],
                 ],
             ],
         ];
+    }
+
+    /** Links of one module that the given user is allowed to see. */
+    public static function visibleLinks(array $module, ?User $user): array
+    {
+        return array_values(array_filter($module['links'], function (array $link) use ($user) {
+            if (! isset($link['roles'])) {
+                return true;
+            }
+
+            return $user !== null && $user->hasRole(...$link['roles']);
+        }));
     }
 }

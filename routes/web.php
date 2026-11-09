@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FleetController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +23,10 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Logged-in users only
+| Logged-in users only (and only while the account is active)
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::view('/dashboard', 'dashboard')->name('dashboard');
@@ -36,12 +37,39 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/password', [ProfileController::class, 'editPassword'])->name('profile.password');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
-    // Modules (replace the legacy input-form / output-form / edit-form ... .php files)
-    Route::resource('items', ItemController::class)->except('show');
-    Route::resource('vendors', VendorController::class)->except('show');
-    Route::resource('warehouses', WarehouseController::class)->except('show');
-
-    // Operational Fleet - placeholder, see FleetController
+    /*
+    |----------------------------------------------------------------------
+    | READ access: every role (admin, staff, viewer)
+    |----------------------------------------------------------------------
+    */
+    Route::resource('items', ItemController::class)->only('index');
+    Route::resource('vendors', VendorController::class)->only('index');
+    Route::resource('warehouses', WarehouseController::class)->only('index');
     Route::get('/fleet', [FleetController::class, 'index'])->name('fleet.index');
-    Route::get('/fleet/create', [FleetController::class, 'create'])->name('fleet.create');
+
+    /*
+    |----------------------------------------------------------------------
+    | WRITE access: admin and staff only (viewer gets 403).
+    | Vendor additionally checks VendorPolicy inside the controller
+    | (staff may only edit their own record, only admin may delete).
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::resource('items', ItemController::class)->except(['index', 'show']);
+        Route::resource('vendors', VendorController::class)->except(['index', 'show']);
+        Route::resource('warehouses', WarehouseController::class)->except(['index', 'show']);
+
+        // Operational Fleet - placeholder, see FleetController
+        Route::get('/fleet/create', [FleetController::class, 'create'])->name('fleet.create');
+    });
+
+    /*
+    |----------------------------------------------------------------------
+    | ADMIN only: manage roles and activate / deactivate accounts
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    });
 });

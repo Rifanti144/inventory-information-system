@@ -19,6 +19,7 @@
               <th>Company Legality</th>
               <th>PIC Name</th>
               <th>PIC Contact</th>
+              <th>Created By</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -30,26 +31,37 @@
                 <td>{{ $vendor->company_legality }}</td>
                 <td>{{ $vendor->pic_name }}</td>
                 <td>{{ $vendor->pic_contact }}</td>
+                <td>{{ $vendor->user?->name ?? '-' }}</td>
                 <td>
-                  <div class="action-buttons">
-                    <a href="{{ route('vendors.edit', $vendor) }}" class="btn-edit">Edit</a>
-                    <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" data-confirm="Are you sure you want to delete this vendor?">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn-delete">Delete</button>
-                    </form>
-                  </div>
+                  @canany(['update', 'delete'], $vendor)
+                    <div class="action-buttons">
+                      @can('update', $vendor)
+                        <a href="{{ route('vendors.edit', $vendor) }}" class="btn-edit">Edit</a>
+                      @endcan
+                      @can('delete', $vendor)
+                        <form method="POST" action="{{ route('vendors.destroy', $vendor) }}" data-confirm="Are you sure you want to delete this vendor?">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                      @endcan
+                    </div>
+                  @else
+                    -
+                  @endcanany
                 </td>
               </tr>
             @empty
-              <tr class="empty-row"><td colspan="6">No vendors added yet.</td></tr>
+              <tr class="empty-row"><td colspan="7">No vendors added yet.</td></tr>
             @endforelse
           </tbody>
         </table>
       </div>
     </div>
 
-    <a href="{{ route('vendors.create') }}" class="btn-add">Add Another Vendor</a>
+    @can('create', \App\Models\Vendor::class)
+      <a href="{{ route('vendors.create') }}" class="btn-add">Add Another Vendor</a>
+    @endcan
   </div>
 </main>
 @endsection

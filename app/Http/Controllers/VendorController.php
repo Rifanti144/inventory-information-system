@@ -5,22 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Vendor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class VendorController extends Controller
 {
     public function index()
     {
-        return view('vendors.index', ['vendors' => Vendor::orderBy('id')->get()]);
+        Gate::authorize('viewAny', Vendor::class);
+
+        return view('vendors.index', [
+            'vendors' => Vendor::with('user')->orderBy('id')->get(),
+        ]);
     }
 
     public function create()
     {
+        Gate::authorize('create', Vendor::class);
+
         return view('vendors.create');
     }
 
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create', Vendor::class);
+
         Vendor::create($this->validated($request));
 
         return redirect()->route('vendors.index')->with('status', 'Vendor added.');
@@ -28,11 +37,15 @@ class VendorController extends Controller
 
     public function edit(Vendor $vendor)
     {
+        Gate::authorize('update', $vendor);
+
         return view('vendors.edit', compact('vendor'));
     }
 
     public function update(Request $request, Vendor $vendor): RedirectResponse
     {
+        Gate::authorize('update', $vendor);
+
         $vendor->update($this->validated($request));
 
         return redirect()->route('vendors.index')->with('status', 'Vendor updated.');
@@ -40,6 +53,8 @@ class VendorController extends Controller
 
     public function destroy(Vendor $vendor): RedirectResponse
     {
+        Gate::authorize('delete', $vendor);
+
         $vendor->delete();
 
         return redirect()->route('vendors.index')->with('status', 'Vendor deleted.');

@@ -16,7 +16,7 @@
           <i class="nav-arrow" aria-hidden="true"></i>
         </button>
         <div class="nav-children">
-          @foreach ($m['links'] as $link)
+          @foreach (\App\Support\Modules::visibleLinks($m, auth()->user()) as $link)
             <a href="{{ route($link['route']) }}" class="nav-child {{ request()->routeIs($link['route']) ? 'is-current' : '' }}">{{ $link['label'] }}</a>
           @endforeach
         </div>

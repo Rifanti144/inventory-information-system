@@ -11,7 +11,7 @@
   <section class="hero">
     <h1>Manage your own Inventory Systems</h1>
     <p>Warehousing, Vendors, Items, and Operational</p>
-    <a href="#modules" class="hero-btn">Start to Add Data</a>
+    <a href="#modules" class="hero-btn">{{ auth()->user()->hasRole('admin', 'staff') ? 'Start to Add Data' : 'Browse Data' }}</a>
   </section>
 
   <section class="cards" id="modules">
@@ -25,8 +25,9 @@
         </div>
 
         <div class="card-actions">
-          <a href="{{ route($m['links'][0]['route']) }}" class="card-btn card-btn--add">{{ $m['links'][0]['label'] }}</a>
-          <a href="{{ route($m['links'][1]['route']) }}" class="card-btn card-btn--view">{{ $m['links'][1]['label'] }}</a>
+          @foreach (\App\Support\Modules::visibleLinks($m, auth()->user()) as $link)
+            <a href="{{ route($link['route']) }}" class="card-btn card-btn--{{ $link['type'] }}">{{ $link['label'] }}</a>
+          @endforeach
         </div>
       </article>
     @endforeach
