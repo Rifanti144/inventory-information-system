@@ -28,6 +28,7 @@ class AuthController extends Controller
         ]);
 
         // The "hashed" cast on User::password hashes it automatically.
+        // role is NOT in $data, so every new account starts as "viewer" (DB default).
         User::create($data);
 
         return redirect(route('login') . '#login')
@@ -44,6 +45,15 @@ class AuthController extends Controller
         if (! Auth::attempt($credentials)) {
             return redirect(route('login') . '#login')
                 ->withErrors(['email' => 'Email or password is incorrect.'])
+                ->onlyInput('email');
+        }
+
+        // Correct password, but the account may have been switched off by an admin.
+        if (! Auth::user()->is_active) {
+            Auth::logout();
+
+            return redirect(route('login') . '#login')
+                ->withErrors(['email' => 'Your account has been deactivated. Please contact an administrator.'])
                 ->onlyInput('email');
         }
 

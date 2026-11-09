@@ -11,15 +11,27 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Demo accounts, one per role. LOCAL / DEMO USE ONLY:
+     * change or delete these passwords before deploying to a public server.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $accounts = [
+            ['name' => 'Admin',  'email' => 'admin@example.com',  'role' => User::ROLE_ADMIN],
+            ['name' => 'Staff',  'email' => 'staff@example.com',  'role' => User::ROLE_STAFF],
+            ['name' => 'Viewer', 'email' => 'viewer@example.com', 'role' => User::ROLE_VIEWER],
+        ];
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        foreach ($accounts as $account) {
+            $user = User::firstOrNew(['email' => $account['email']]);
+
+            // role / is_active are not mass-assignable, so forceFill is used.
+            $user->forceFill([
+                'name' => $account['name'],
+                'role' => $account['role'],
+                'is_active' => true,
+                'password' => 'Password123!', // hashed by the "hashed" cast
+            ])->save();
+        }
     }
 }
