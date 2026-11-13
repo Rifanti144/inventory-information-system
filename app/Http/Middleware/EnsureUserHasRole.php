@@ -6,10 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Usage in routes:  ->middleware('role:admin,staff')
- * Feature-level check: may this role enter this area at all?
- */
 class EnsureUserHasRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response

@@ -21,7 +21,6 @@ class RoleAccessTest extends TestCase
 
     private function makeUser(string $role, bool $active = true): User
     {
-        // Factories ignore $fillable, so role / is_active can be set here.
         return User::factory()->create(['role' => $role, 'is_active' => $active]);
     }
 
@@ -33,8 +32,6 @@ class RoleAccessTest extends TestCase
 
         return $vendor;
     }
-
-    // ---------- 1. who may log in ----------
 
     public function test_guest_is_redirected_to_login(): void
     {
@@ -60,8 +57,6 @@ class RoleAccessTest extends TestCase
         $this->assertGuest();
     }
 
-    // ---------- 2. who may use which feature (middleware) ----------
-
     public function test_viewer_can_see_vendor_list_but_not_open_create_form(): void
     {
         $viewer = $this->makeUser('viewer');
@@ -84,8 +79,6 @@ class RoleAccessTest extends TestCase
         $this->actingAs($this->makeUser('staff'))->get('/admin/users')->assertForbidden();
         $this->actingAs($this->makeUser('admin'))->get('/admin/users')->assertOk();
     }
-
-    // ---------- 3. which action is allowed (policy) ----------
 
     public function test_staff_can_create_vendor_and_becomes_its_owner(): void
     {
@@ -137,8 +130,6 @@ class RoleAccessTest extends TestCase
         $this->assertDatabaseMissing('vendors', ['id' => $vendor->id]);
     }
 
-    // ---------- registration cannot grant admin ----------
-
     public function test_new_registration_is_always_viewer(): void
     {
         $this->post('/register', [
@@ -146,7 +137,7 @@ class RoleAccessTest extends TestCase
             'email' => 'newbie@example.com',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
-            'role' => 'admin', // must be ignored
+            'role' => 'admin',
         ])->assertRedirect();
 
         $this->assertDatabaseHas('users', ['email' => 'newbie@example.com', 'role' => 'viewer']);

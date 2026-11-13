@@ -5,14 +5,6 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Vendor;
 
-/**
- * Action-level rules for the Vendor module.
- *
- *            | view list | create | edit            | delete
- *  admin     |    yes    |  yes   | any vendor      | any vendor
- *  staff     |    yes    |  yes   | only their own  | no
- *  viewer    |    yes    |  no    | no              | no
- */
 class VendorPolicy
 {
     public function viewAny(User $user): bool

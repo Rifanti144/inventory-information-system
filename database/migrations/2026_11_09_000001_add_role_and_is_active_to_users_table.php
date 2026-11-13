@@ -9,9 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // admin | staff | viewer  (least privilege by default)
             $table->string('role')->default('viewer')->after('password');
-            // false = account is blocked from logging in
+
             $table->boolean('is_active')->default(true)->after('role');
         });
     }

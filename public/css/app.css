@@ -1,13 +1,3 @@
-/* ==========================================================================
-   Inventory Information Systems - one stylesheet for every page
-   Values come straight from the Figma exports (1440px frames):
-   Dashboard, Main Page, Register, Profile, Change Password, Left Bar.
-   Absolute Figma positions were converted to flex/grid so it also works on
-   smaller screens; colours and proportions are kept as designed.
-   SIZE NOTE: every length (px, and the vw part of clamp()) is the Figma value
-   x 0.85 (UI scaled down 15%). Media-query breakpoints are not scaled.
-   ========================================================================== */
-
 :root {
   --navy-bg: #010736;
   --navy-panel: #0D1C42;
@@ -40,7 +30,6 @@ body.no-scroll { overflow: hidden; }
 
 a { color: inherit; }
 
-/* ---------- Page wrapper + background glows (Polygon 1 / 3 / 5) ---------- */
 .page { position: relative; overflow: hidden; min-height: 100vh; }
 .page > .topbar { position: relative; z-index: 30; }
 .page > .page-main { position: relative; z-index: 1; }
@@ -52,25 +41,24 @@ a { color: inherit; }
   height: 814.3px;
   pointer-events: none;
 }
-.glow--white {            /* Polygon 1 */
+.glow--white {
   left: -262.65px; top: 120.7px; transform: rotate(90deg);
   background: radial-gradient(62.13% 96.45% at 44.69% 118.24%, #FFFFFF 3.39%, #464F89 29.33%, #161E5A 53.85%, #010736 77.98%);
 }
-.glow--pink-top {         /* Polygon 3 */
+.glow--pink-top {
   right: -352.75px; top: -153px; transform: rotate(-151deg);
   background: radial-gradient(62.13% 96.45% at 44.69% 118.24%, #FD8AFF 3.39%, #16247C 29.33%, #161E5A 53.85%, #010736 77.98%);
 }
-.glow--pink-bottom {      /* Polygon 5 (Main Page) */
+.glow--pink-bottom {
   left: -419.05px; bottom: -391px; transform: rotate(39deg);
   background: radial-gradient(62.13% 96.45% at 44.69% 118.24%, #FD8AFF 3.39%, #16247C 29.33%, #161E5A 53.85%, #010736 77.98%);
 }
-.glow--pink-small {       /* Polygon 5 (Register / Profile / Change Password) */
+.glow--pink-small {
   width: 656.2px; height: 584.8px;
   left: -204px; top: 380.8px; transform: rotate(39deg);
   background: radial-gradient(71.74% 128.59% at 49.81% 142.41%, #FD8AFF 3.39%, #16247C 29.33%, #161E5A 53.85%, #010736 77.98%);
 }
 
-/* ---------- Header (Rectangle 2 + Logo) ---------- */
 .topbar {
   z-index: 30;
   height: var(--header-h);
@@ -97,7 +85,6 @@ a { color: inherit; }
   color: var(--navy-accent);
 }
 
-/* hamburger (Group 36: 3 lines, 45px wide, 7px thick) */
 .menu-toggle {
   width: 38.25px;
   height: 28.05px;
@@ -121,7 +108,6 @@ a { color: inherit; }
 .menu-toggle:hover span { background: var(--navy-bg); }
 .menu-toggle:focus-visible { outline: 2.55px solid var(--navy-bg); outline-offset: 3.4px; }
 
-/* user menu (Group 35 avatar + Username + Polygon 6) */
 .user-menu { position: relative; margin-left: auto; }
 .user-toggle {
   display: flex;
@@ -155,7 +141,7 @@ a { color: inherit; }
   width: 25.5px; height: 12.75px;
   margin-left: 5.1px;
   background: var(--navy-bg);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);   /* Polygon 6 (rotated 180deg) */
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
   transition: transform .15s ease;
 }
 .user-toggle[aria-expanded="true"] .caret { transform: rotate(180deg); }
@@ -190,7 +176,6 @@ a { color: inherit; }
 .user-dropdown a:hover,
 .user-dropdown button:hover { background: var(--lime); color: var(--navy-bg); }
 
-/* ---------- Left bar (Left Bar frame) ---------- */
 .sidebar-overlay {
   position: fixed;
   inset: 0;
@@ -245,7 +230,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* Polygon 7/8/9: 30x15 triangle, pointing up when closed */
+
 .nav-arrow {
   position: absolute;
   right: 12.75px;
@@ -256,7 +241,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   clip-path: polygon(50% 0, 0 100%, 100% 100%);
   transition: transform .15s ease, background .15s ease;
 }
-/* hover + open = white pill (Group 3/4) */
+
 .nav-parent:hover,
 .nav-group.is-open .nav-parent {
   background: var(--white);
@@ -264,7 +249,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   box-shadow: 4.67px 5.44px 0 var(--navy-accent);
   --arrow: var(--navy-bg);
 }
-.nav-group.is-open .nav-arrow { transform: rotate(180deg); }   /* Polygon 6: pointing down */
+.nav-group.is-open .nav-arrow { transform: rotate(180deg); }
 .nav-parent:focus-visible { outline: 2.55px solid var(--lime); outline-offset: 2.55px; }
 
 .nav-children { display: none; margin-top: 12.75px; }
@@ -276,7 +261,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   margin: 0 0 4.76px 49.3px;
   height: 41.11px;
   padding: 0 20.4px;
-  border: 2.55px solid transparent;           /* Group 5: 3px white outline pill */
+  border: 2.55px solid transparent;
   border-radius: 21.25px;
   color: var(--cream);
   font-size: 22.1px;
@@ -294,7 +279,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   outline: none;
 }
 
-/* ---------- Buttons ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -319,7 +303,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
 .btn--wide { width: 285.6px; }
 .btn-stack { display: flex; flex-direction: column; align-items: center; gap: 18.7px; }
 
-/* hero button (Group 10) */
 .hero-btn {
   display: inline-flex;
   align-items: center;
@@ -338,7 +321,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
 }
 .hero-btn:hover { transform: translate(-1.7px, -1.7px); }
 
-/* ---------- Hero (Main Page + Dashboard) ---------- */
 .hero { text-align: center; padding: 158.95px 20.4px 0; }
 .hero h1 {
   max-width: 653.65px;
@@ -356,7 +338,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   line-height: 30.6px;
 }
 
-/* ---------- Main page: login section ---------- */
 .login-section {
   display: flex;
   align-items: center;
@@ -379,7 +360,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   color: var(--cream);
 }
 
-/* ---------- Panels, fields (Rectangle 1, Group 3/5, labels) ---------- */
 .panel {
   width: 100%;
   max-width: 558.45px;
@@ -464,16 +444,14 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
 .alert--error { background: rgba(255, 77, 77, .14); color: var(--error); border: 1.7px solid var(--error); }
 .page-main > .alert { max-width: 1088.85px; margin: 27.2px auto 0; }
 
-/* Back button (Group 13/14: left 52, top 158) */
 .back-btn {
   position: absolute;
   left: 44.2px;
-  top: 41.65px;          /* 158px from page top = 49px below the 109px header */
+  top: 41.65px;
   width: 198.9px;
   z-index: 2;
 }
 
-/* ---------- Dashboard cards (Groups 14/26/22/27) ---------- */
 .cards {
   display: grid;
   grid-template-columns: repeat(2, 427.55px);
@@ -491,7 +469,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   box-shadow: 8.07px 8.5px 0 var(--navy-accent);
 }
 .card-head { display: flex; align-items: center; gap: 21.25px; padding-right: 17px; }
-.card-icon {                                   /* white tile 85.7 x 87.6, radius 21 */
+.card-icon {
   position: relative;
   flex: 0 0 72.87px;
   width: 72.87px; height: 74.48px;
@@ -500,7 +478,7 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
   display: grid; place-items: center;
   overflow: hidden;
 }
-.card-icon::before {                           /* Ellipse 1-4: floor shadow under the picture */
+.card-icon::before {
   content: "";
   position: absolute;
   left: 1.7px; top: 45.9px;
@@ -534,7 +512,6 @@ body.sidebar-open .sidebar { transform: none; visibility: visible; }
 .card-btn--add { background: var(--lime); color: var(--navy-bg); }
 .card-btn--view { background: var(--navy-bg); color: var(--lime); border: 3.4px solid var(--lime); }
 
-/* ---------- Module pages (legacy PHP pages, restyled with the same tokens) ---------- */
 .content {
   max-width: 1122px;
   margin: 0 auto;
@@ -626,12 +603,8 @@ tbody tr:last-child td { border-bottom: none; }
 .form-actions .btn { width: auto; min-width: 153px; height: 49.3px; font-size: 18.7px; }
 .form-actions .btn--cancel { background: var(--navy-accent); border-color: var(--navy-accent); color: var(--cream); box-shadow: none; }
 
-/* ---------- Text inside a list card (403 page, notices) ---------- */
 .list-card p { margin: 0 0 6.8px; font-size: 17px; line-height: 25.5px; }
 
-/* ---------- Manage Users table ----------
-   Built from the same pieces as the Vendor table: white table, grey header,
-   lime .btn-edit, and the white select with the accent shadow from the forms. */
 .table-users tbody td { vertical-align: middle; }
 .table-users .col-center { text-align: center; }
 .inline-form { margin: 0; }
@@ -675,13 +648,11 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .table-check:focus-visible { outline: 2.55px solid var(--lime); outline-offset: 1.7px; }
 
-/* ---------- Small helpers (replace inline style="" attributes) ---------- */
 .user-role { display: block; padding: 6.8px 13.6px; font-size: 11.05px; opacity: .7; }
 .btn-stack--login { margin-top: 44.2px; }
 .btn-stack--profile { margin-top: 37.4px; }
 .page-end-space { height: 59.5px; }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 1240px) {
   .cards { grid-template-columns: minmax(0, 427.55px); }
   .login-section { flex-direction: column; align-items: stretch; padding: 0 20.4px 85px; margin-top: 119px; }

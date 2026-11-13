@@ -18,7 +18,7 @@ class AuthController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            // "name" column = the username shown on the profile page
+
             'name' => ['required', 'string', 'max:50', 'unique:users,name'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
@@ -27,8 +27,6 @@ class AuthController extends Controller
             'email.unique' => 'This email is already registered.',
         ]);
 
-        // The "hashed" cast on User::password hashes it automatically.
-        // role is NOT in $data, so every new account starts as "viewer" (DB default).
         User::create($data);
 
         return redirect(route('login') . '#login')
@@ -48,7 +46,6 @@ class AuthController extends Controller
                 ->onlyInput('email');
         }
 
-        // Correct password, but the account may have been switched off by an admin.
         if (! Auth::user()->is_active) {
             Auth::logout();
 

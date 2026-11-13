@@ -1,7 +1,7 @@
 @php
   $modules = \App\Support\Modules::all();
   $current = collect($modules)->first(fn ($m) => request()->routeIs($m['pattern']));
-  $openKey = $current['key'] ?? $modules[0]['key'];   // dashboard: first group open, as designed
+  $openKey = $current['key'] ?? $modules[0]['key'];
 @endphp
 
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
