@@ -30,12 +30,12 @@
         @error('email') <p class="field-error">{{ $message }}</p> @enderror
       </div>
 
-      <div class="btn-stack" style="margin-top: 44px;">
+      <div class="btn-stack btn-stack--profile">
         <button type="submit" class="btn btn--lime btn--wide">Save Changes</button>
         <a href="{{ route('profile.password') }}" class="btn btn--outline btn--wide">Change Password</a>
       </div>
     </form>
   </div>
 
-  <div style="height: 70px;"></div>
+  <div class="page-end-space"></div>
 @endsection

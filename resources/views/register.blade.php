@@ -43,5 +43,5 @@
     </form>
   </div>
 
-  <div style="height: 70px;"></div>
+  <div class="page-end-space"></div>
 @endsection

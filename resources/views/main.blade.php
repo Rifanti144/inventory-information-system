@@ -39,7 +39,7 @@
           @error('password') <p class="field-error">{{ $message }}</p> @enderror
         </div>
 
-        <div class="btn-stack" style="margin-top: 52px;">
+        <div class="btn-stack btn-stack--login">
           <button type="submit" class="btn btn--lime">Login</button>
           <a href="{{ route('register') }}" class="btn btn--outline">Register</a>
         </div>
